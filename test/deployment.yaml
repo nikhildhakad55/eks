@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: admin-container
-        image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/nikhil-gitlab-testing:3
+        image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/nikhil-gitlab-testing:6
         imagePullPolicy: Always
         resources:
             limits:
