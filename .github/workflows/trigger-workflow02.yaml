@@ -32,7 +32,7 @@ jobs:
           echo "Fetched Image Tag: ${{ github.event.client_payload.image_tag }}"
         fi
 
-    - name: Debugging: Check deployment.yaml file before update
+    - name: Debugging
       run: |
         echo "Checking the contents of deployment.yaml"
         cat test/deployment.yaml
@@ -47,7 +47,7 @@ jobs:
           exit 1
         fi
 
-    - name: Debugging: Check deployment.yaml file after update
+    - name: after update
       run: |
         echo "Checking the contents of deployment.yaml after update"
         cat test/deployment.yaml
