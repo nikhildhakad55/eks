@@ -2,7 +2,7 @@ name: Workflow02
 on:
   repository_dispatch:
     types:
-      - trigger-workflow02  
+      - trigger-workflow02  # Ensure this matches the event-type from first workflow
 
 jobs:
   deploy:
@@ -34,8 +34,8 @@ jobs:
 
     - name: Update Deployment File with New Image Tag
       run: |
-        if [[ -f deployment.yaml ]]; then
-          sed -i'' -e 's|image: .*|image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/github-testing:${{ github.event.client_payload.image_tag }}|' deployment.yaml
+        if [[ -f test/deployment.yaml ]]; then  # Corrected path to the deployment file
+          sed -i'' -e 's|image: .*|image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/github-testing:${{ github.event.client_payload.image_tag }}|' test/deployment.yaml
         else
           echo "deployment.yaml file not found!"
           exit 1
@@ -44,4 +44,3 @@ jobs:
     - name: Deployment completed successfully
       run: |
         echo "Deployment completed successfully"
-
