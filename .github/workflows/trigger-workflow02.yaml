@@ -2,7 +2,7 @@ name: Workflow02
 on:
   repository_dispatch:
     types:
-      - trigger-workflow02  # Ensure this matches the event-type from first workflow
+      - trigger-workflow02
 
 jobs:
   deploy:
@@ -29,17 +29,37 @@ jobs:
           echo "Image tag is not provided"
           exit 1
         else
-          echo "Fetched Image Tag: ${{ github.event.client_payload.image_tag }}"  # Image tag is retrieved here
+          echo "Fetched Image Tag: ${{ github.event.client_payload.image_tag }}"
         fi
+
+    - name: Debugging: Check deployment.yaml file before update
+      run: |
+        echo "Checking the contents of deployment.yaml"
+        cat test/deployment.yaml
 
     - name: Update Deployment File with New Image Tag
       run: |
-        if [[ -f test/deployment.yaml ]]; then  # Corrected path to the deployment file
+        echo "Updating the image tag in deployment.yaml"
+        if [[ -f test/deployment.yaml ]]; then
           sed -i'' -e 's|image: .*|image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/github-testing:${{ github.event.client_payload.image_tag }}|' test/deployment.yaml
         else
           echo "deployment.yaml file not found!"
           exit 1
         fi
+
+    - name: Debugging: Check deployment.yaml file after update
+      run: |
+        echo "Checking the contents of deployment.yaml after update"
+        cat test/deployment.yaml
+
+    - name: Commit and Push Updated deployment.yaml
+      run: |
+        echo "Committing the changes to deployment.yaml"
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "Your Name"
+        git add test/deployment.yaml
+        git commit -m "Update image tag in deployment.yaml"
+        git push origin main
 
     - name: Deployment completed successfully
       run: |
