@@ -55,8 +55,10 @@ jobs:
     - name: Commit and Push Updated deployment.yaml
       run: |
         echo "Committing the changes to deployment.yaml"
-        git config --global user.email "nikhildhkad@gmail.com"
-        git config --global user.name "nikhildhakad55"
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
         git add test/deployment.yaml
         git commit -m "Update image tag in deployment.yaml"
         git push https://${{ secrets.GH_PAT }}@github.com/nikhildhakad55/eks.git HEAD:main
+     env:
+        GH_PAT: ${{ secrets.GH_PAT }}
