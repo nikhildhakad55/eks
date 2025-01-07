@@ -9,56 +9,56 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2  
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2  
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Fetch Image Tag from Repo A
-      run: |
-        if [[ -z "${{ github.event.client_payload.image_tag }}" ]]; then
-          echo "Image tag is not provided"
-          exit 1
-        else
-          echo "Fetched Image Tag: ${{ github.event.client_payload.image_tag }}"
-        fi
+      - name: Fetch Image Tag from Repo A
+        run: |
+          if [[ -z "${{ github.event.client_payload.image_tag }}" ]]; then
+            echo "Image tag is not provided"
+            exit 1
+          else
+            echo "Fetched Image Tag: ${{ github.event.client_payload.image_tag }}"
+          fi
 
-    - name: Check deployment.yaml file before update
-      run: |
-        echo "Checking the contents of deployment.yaml"
-        cat test/deployment.yaml
+      - name: Check deployment.yaml file before update
+        run: |
+          echo "Checking the contents of deployment.yaml"
+          cat test/deployment.yaml
 
-    - name: Update Deployment File with New Image Tag
-      run: |
-        echo "Updating the image tag in deployment.yaml"
-        if [[ -f test/deployment.yaml ]]; then
-          sed -i'' -e 's|image: .*|image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/github-testing:${{ github.event.client_payload.image_tag }}|' test/deployment.yaml
-        else
-          echo "deployment.yaml file not found!"
-          exit 1
-        fi
+      - name: Update Deployment File with New Image Tag
+        run: |
+          echo "Updating the image tag in deployment.yaml"
+          if [[ -f test/deployment.yaml ]]; then
+            sed -i'' -e 's|image: .*|image: 058264137181.dkr.ecr.eu-west-1.amazonaws.com/github-testing:${{ github.event.client_payload.image_tag }}|' test/deployment.yaml
+          else
+            echo "deployment.yaml file not found!"
+            exit 1
+          fi
 
-    - name: Check deployment.yaml file after update
-      run: |
-        echo "Checking the contents of deployment.yaml after update"
-        cat test/deployment.yaml
+      - name: Check deployment.yaml file after update
+        run: |
+          echo "Checking the contents of deployment.yaml after update"
+          cat test/deployment.yaml
 
-    - name: Commit and Push Updated deployment.yaml
-      run: |
-        echo "Committing the changes to deployment.yaml"
-        git config --global user.email "actions@github.com"
-        git config --global user.name "GitHub Actions"
-        git add test/deployment.yaml
-        git commit -m "Update image tag in deployment.yaml"
-        git push https://${{ secrets.GH_PAT }}@github.com/nikhildhakad55/eks.git HEAD:main
-     env:
-        GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Commit and Push Updated deployment.yaml
+        run: |
+          echo "Committing the changes to deployment.yaml"
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add test/deployment.yaml
+          git commit -m "Update image tag in deployment.yaml"
+          git push https://${{ secrets.GH_PAT }}@github.com/nikhildhakad55/eks.git HEAD:main
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
